@@ -667,6 +667,11 @@ grub_err_t ventoy_cmd_raw_chain_data(grub_extcmd_context_t ctxt, int argc, char 
         return 1;
     }
 
+    if (grub_strncmp(args[0], g_iso_path, grub_strlen(g_iso_path)))
+    {
+        file->vlnk = 1;
+    }
+
     img_chunk_size = g_img_chunk_list.cur_chunk * sizeof(ventoy_img_chunk);
     
     size = sizeof(ventoy_chain_head) + img_chunk_size;
@@ -682,10 +687,10 @@ grub_err_t ventoy_cmd_raw_chain_data(grub_extcmd_context_t ctxt, int argc, char 
         }
     }
 
-    chain = grub_malloc(size);
+    chain = ventoy_alloc_chain(size);
     if (!chain)
     {
-        grub_printf("Failed to alloc chain memory size %u\n", size);
+        grub_printf("Failed to alloc chain raw memory size %u\n", size);
         grub_file_close(file);
         return 1;
     }
